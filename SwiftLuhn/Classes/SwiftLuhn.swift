@@ -11,6 +11,7 @@ import Foundation
 open class SwiftLuhn {
     public enum CardType: Int {
         case amex = 0
+        case elo
         case visa
         case mastercard
         case discover
@@ -30,6 +31,8 @@ open class SwiftLuhn {
         switch cardType {
         case .amex:
             return "^3[47][0-9]{5,}$"
+        case .elo:
+            return "^(4011(78|79)|43(1274|8935)|45(1416|7393|763(1|2))|50(4175|6699|67[0-7][0-9]|9000)|50(9[0-9][0-9][0-9])|627780|63(6297|6368)|650(03([^4])|04([0-9])|05(0|1)|05([7-9])|06([0-9])|07([0-9])|08([0-9])|4([0-3][0-9]|8[5-9]|9[0-9])|5([0-9][0-9]|3[0-8])|9([0-6][0-9]|7[0-8])|7([0-2][0-9])|541|700|720|727|901)|65165([2-9])|6516([6-7][0-9])|65500([0-9])|6550([0-5][0-9])|655021|65505([6-7])|6516([8-9][0-9])|65170([0-4]))"
         case .dinersClub:
             return "^3(?:0[0-5]|[68][0-9])[0-9]{4,}$"
         case .discover:
@@ -53,6 +56,8 @@ open class SwiftLuhn {
         switch cardType {
         case .amex:
             return "^3[47][0-9]+$"
+        case .elo:
+            return "^(4011(78|79)|43(1274|8935)|45(1416|7393|763(1|2))|50(4175|6699|67[0-7][0-9]|9000)|50(9[0-9][0-9][0-9])|627780|63(6297|6368)|650(03([^4])|04([0-9])|05(0|1)|05([7-9])|06([0-9])|07([0-9])|08([0-9])|4([0-3][0-9]|8[5-9]|9[0-9])|5([0-9][0-9]|3[0-8])|9([0-6][0-9]|7[0-8])|7([0-2][0-9])|541|700|720|727|901)|65165([2-9])|6516([6-7][0-9])|65500([0-9])|6550([0-5][0-9])|655021|65505([6-7])|6516([8-9][0-9])|65170([0-4]))"
         case .dinersClub:
             return "^3(?:0[0-5]|[68][0-9])[0-9]+$"
         case .discover:
@@ -116,7 +121,7 @@ open class SwiftLuhn {
     class func cardType(for cardNumber: String, suggest: Bool = false) throws -> CardType {
         var foundCardType: CardType?
         
-        for i in CardType.amex.rawValue...CardType.jcb.rawValue {
+        for i in CardType.amex.rawValue...CardType.mir.rawValue {
             let cardType = CardType(rawValue: i)!
             let regex = suggest ? suggestionRegularExpression(for: cardType) : regularExpression(for: cardType)
             
@@ -141,6 +146,8 @@ public extension SwiftLuhn.CardType {
         switch self {
         case .amex:
             return "American Express"
+        case .elo:
+            return "Elo"
         case .visa:
             return "Visa"
         case .mastercard:
@@ -164,22 +171,24 @@ public extension SwiftLuhn.CardType {
         switch string.lowercased() {
         case "american express":
             self.init(rawValue: 0)
-        case "visa":
+        case "elo":
             self.init(rawValue: 1)
-        case "mastercard":
+        case "visa":
             self.init(rawValue: 2)
-        case "discover":
+        case "mastercard":
             self.init(rawValue: 3)
-        case "diner's club":
+        case "discover":
             self.init(rawValue: 4)
-        case "jcb":
+        case "diner's club":
             self.init(rawValue: 5)
-        case "maestro":
+        case "jcb":
             self.init(rawValue: 6)
-        case "rupay":
+        case "maestro":
             self.init(rawValue: 7)
-        case "mir":
+        case "rupay":
             self.init(rawValue: 8)
+        case "mir":
+            self.init(rawValue: 9)
         default:
             return nil
         }
